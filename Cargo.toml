@@ -3,7 +3,10 @@ name = "avro-tools"
 version = "0.1.0"
 authors = ["Daniël Heres <danielheres@gmail.com>"]
 edition = "2018"
-
+license = "MIT"
+description = "Avro-tools implementation"
+documentation = "https://github.com/Dandandan/avro-tools-rust"
+repository = "https://github.com/Dandandan/avro-tools-rust"
 
 [dependencies]
 avro-rs = "0.6"

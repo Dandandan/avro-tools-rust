@@ -4,4 +4,4 @@ Avro tools using Rust
 
 # Usage
 
-avro-tools
+avro-tools getschema file.avro
