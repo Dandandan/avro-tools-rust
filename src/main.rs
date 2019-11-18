@@ -49,49 +49,43 @@ fn avro_to_json(x: Value) -> serde_json::Value {
 }
 
 
-fn get_schema(file_name: &str) {
-    let file = File::open(&file_name);
+fn get_schema(file: File) {
+    let buffered_reader = BufReader::new(file);
 
-    match file {
-        Ok(f) => {
-            let buffered_reader = BufReader::new(f);
-
-            let r = Reader::new(buffered_reader);
-            for x in r {
-                let json: serde_json::Value = serde_json::from_str(&x.writer_schema().canonical_form()).expect("");
-                let pretty = serde_json::to_string_pretty(&json).expect("");
-                print!("{}", pretty);
-            }
-        }
-        _ => println!("File `{}` not found", file_name)
+    let r = Reader::new(buffered_reader);
+    for x in r {
+        let json: serde_json::Value = serde_json::from_str(&x.writer_schema().canonical_form()).expect("");
+        let pretty = serde_json::to_string_pretty(&json).expect("");
+        print!("{}", pretty);
     }
 }
 
-fn tojson(file_name: &str) {
-    let file = File::open(&file_name);
+fn tojson(file: File) {
+    let buffered_reader = BufReader::new(file);
 
-    match file {
-        Ok(f) => {
-            let buffered_reader = BufReader::new(f);
+    let r = Reader::new(buffered_reader);
+    for x in r.unwrap() {
+        let json = avro_to_json(x.unwrap());
 
-            let r = Reader::new(buffered_reader);
-            for x in r.unwrap() {
-                let json = avro_to_json(x.unwrap());
+        print!("{}", json);
+    }
+}
 
-                print!("{}", json);
-            }
-        }
-        _ => println!("File `{}` not found", file_name)
+fn parse_command(file: File, command: &str) {
+    match command.as_ref() {
+        "getschema" => get_schema(file),
+        "tojson" => tojson(file),
+        _ => println!("Command `{}` not supported", command)
     }
 }
 
 fn main() {
     let opt = Opt::from_args();
 
-    match opt.command.as_ref() {
-        "getschema" => get_schema(&opt.file),
-        "tojson" => tojson(&opt.file),
+    let file = File::open(&opt.file);
 
-        _ => println!("command nut supported")
+    match file {
+        Ok(f) => parse_command(f, &opt.command),
+        _ => println!("File `{}` not found", opt.file)
     }
 }
