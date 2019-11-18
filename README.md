@@ -1,7 +1,9 @@
 # Avro-tools-rust
-Avro tools using Rust
+Implementation of avro-tools in Rust
 
+# Supported commands
 
-# Usage
-
+```
 avro-tools getschema file.avro
+avro-tools tojson file.avro
+```
